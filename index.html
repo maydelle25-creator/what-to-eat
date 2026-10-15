@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>今日、何食べる？</title>
+<style>
+:root{--bg:#fffaf5;--fg:#2a211b;--sub:#8a7a6c;--card:#fff;--line:#f0e4d8;--soft:#fff1e6;--ac:#ff6a13;--acfg:#fff;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1d1814;--fg:#f6ede4;--sub:#b5a493;--card:#29221c;--line:#3b3229;--soft:#33271d;--ac:#ff7a2b;--acfg:#1d1814}}
+:root[data-theme="dark"]{--bg:#1d1814;--fg:#f6ede4;--sub:#b5a493;--card:#29221c;--line:#3b3229;--soft:#33271d;--ac:#ff7a2b;--acfg:#1d1814}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--fg);font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;display:flex;justify-content:center}
+#app{width:100%;max-width:440px;min-height:100vh;padding:24px 20px 96px;text-align:center;position:relative;overflow:hidden}
+.ac{color:var(--ac)}
+h1{font-size:34px;line-height:1.3;margin:12px 0 8px}
+.s{color:var(--sub);font-size:13px;margin:0}
+.btn{display:block;width:100%;border:0;border-radius:999px;padding:16px;font-size:16px;font-weight:700;background:var(--ac);color:var(--acfg);cursor:pointer;margin-top:12px}
+.btn.o{background:var(--card);color:var(--fg);border:1px solid var(--line);font-weight:500}
+.btn:active{transform:scale(.98)}
+.ring{position:relative;width:240px;height:240px;margin:28px auto}
+.ring i{position:absolute;left:50%;top:50%;margin:-22px;width:44px;height:44px;font-style:normal;font-size:30px;line-height:44px}
+.ring b{position:absolute;left:50%;top:50%;margin:-52px;width:104px;height:104px;border-radius:50%;background:var(--ac);opacity:.9;color:var(--acfg);font-size:17px;line-height:1.3;display:flex;align-items:center;justify-content:center}
+.sub1{font-size:14px;color:var(--sub);margin:18px 0 0}
+.name{font-size:36px;font-weight:800;color:var(--ac);margin:6px 0 16px;word-break:keep-all}
+.pic{background:var(--soft);border-radius:24px;height:200px;display:flex;align-items:center;justify-content:center;font-size:110px}
+.say{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin:-24px 14px 8px;position:relative;font-size:15px;line-height:1.7}
+.dot{position:absolute;width:7px;height:7px;border-radius:50%;animation:pop .6s ease-out both}
+@keyframes pop{from{transform:scale(0) translateY(10px);opacity:0}to{transform:none;opacity:1}}
+.nav{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:center;background:var(--bg);border-top:1px solid var(--line);padding:8px 0 calc(8px + env(safe-area-inset-bottom,0px))}
+.nav div{width:100%;max-width:440px;display:flex}
+.nav button{flex:1;border:0;background:none;color:var(--sub);font-size:11px;cursor:pointer;padding:4px}
+.nav button span{display:block;font-size:20px}
+.nav button.on{color:var(--ac)}
+.box{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;text-align:left}
+.box h2{font-size:17px;text-align:center;margin:0 0 14px}
+.opt{display:flex;align-items:center;gap:12px;width:100%;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:14px;padding:12px;margin-bottom:10px;text-align:left;cursor:pointer;font-size:15px}
+.opt.on{border-color:var(--ac);background:var(--soft)}
+.opt em{font-style:normal;font-size:26px}
+.opt small{display:block;color:var(--sub);font-size:11px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:999px;padding:8px 14px;font-size:13px;cursor:pointer}
+.chip.on{background:var(--ac);color:var(--acfg);border-color:var(--ac)}
+.lab{font-size:13px;color:var(--sub);margin:16px 0 8px}
+.row{display:flex;align-items:center;gap:12px;width:100%;border:0;background:none;color:var(--fg);padding:12px 0;border-bottom:1px solid var(--line);text-align:left;cursor:pointer;font-size:15px}
+.row .t{width:48px;height:48px;border-radius:12px;background:var(--soft);display:flex;align-items:center;justify-content:center;font-size:26px}
+.row .d{color:var(--sub);font-size:12px}
+.row .g{flex:1}
+.sw{width:46px;height:26px;border-radius:13px;background:var(--line);position:relative;flex:none}
+.sw:after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.2s}
+.sw.on{background:var(--ac)}.sw.on:after{left:23px}
+input{width:100%;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--fg);font-size:16px}
+.step{display:flex;gap:12px;align-items:flex-start;margin-bottom:14px;font-size:14px;line-height:1.6}
+.step b{flex:none;width:26px;height:26px;border-radius:50%;background:var(--ac);color:var(--acfg);display:flex;align-items:center;justify-content:center;font-size:13px}
+.msg{color:var(--sub);font-size:14px;padding:30px 0}
+.tt{font-size:17px;font-weight:700;margin:4px 0 16px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+var M=[
+["カツ丼","🍱","サクッといこう。<br>きっといいことあるよ。","和食,丼もの","ld",""],
+["明太子パスタ","🍝","シンプルがいちばん。<br>おいしい時間にしよう。","洋食,麺類","ld",""],
+["豚キムチ定食","🍳","ごはんがすすむ日。<br>スタミナつけてこ！","和食,定食・セット","ld","辛いもの"],
+["担々麺","🍜","ピリ辛でリフレッシュ！<br>やる気スイッチON。","中華,麺類","ld","辛いもの,ナッツ"],
+["オムライス","🍳","ふわとろで幸せチャージ。<br>今日もがんばろう。","洋食","ld",""],
+["サーモン丼","🍣","ちょっと贅沢しよ？<br>自分を甘やかす日も大事。","和食,丼もの","ld","生もの"],
+["麻婆丼","🥘","あつあつで元気回復。<br>ごはんおかわりしたくなる。","中華,丼もの","ld","辛いもの"],
+["カレーライス","🍛","迷ったらカレー。<br>それでだいたい正解。","カレー","ld",""],
+["キーマカレー","🍛","スパイスで気分転換。<br>ちょっと辛めもいいね。","カレー","ld","辛いもの"],
+["ガパオライス","🌶️","いつもと違う味で<br>気分を変えちゃおう。","エスニック,丼もの","ld","辛いもの,パクチー系"],
+["ビビンバ","🥘","混ぜて、のせて、満足。<br>野菜も食べられて一石二鳥。","エスニック,丼もの","ld","辛いもの"],
+["親子丼","🥚","やさしい味で一息。<br>がんばった自分にごほうび。","和食,丼もの","ld",""],
+["焼き魚定食","🐟","ほっとする和の夜ごはん。<br>体も喜ぶやつ。","和食,定食・セット","ld",""],
+["唐揚げ定食","🍗","迷ったら揚げ物。<br>今日は気にしない日！","和食,定食・セット","ld",""],
+["しょうが焼き定食","🥩","ごはんとの相性◎。<br>午後もしっかり動ける。","和食,定食・セット","ld",""],
+["ざるそば","🍜","さっぱりつるっと。<br>重くならない選択。","和食,麺類","l",""],
+["うどん","🍲","やさしく温まろう。<br>胃にもお財布にもやさしい。","和食,麺類","ld",""],
+["ペペロンチーノ","🍝","シンプルだけど満足。<br>ピリッと辛いのが好き。","洋食,麺類","ld","辛いもの"],
+["トマトパスタ","🍅","酸味でさっぱり。<br>気分も軽くなるよ。","洋食,麺類","ld","トマト"],
+["チャーハン","🍚","パラッと香ばしく。<br>お腹いっぱいになろう。","中華","ld",""],
+["天津飯","🍳","ふわとろ卵にあんかけ。<br>やさしい中華の日。","中華,丼もの","ld",""],
+["サラダチキンボウル","🥗","軽めでヘルシー。<br>体に優しい選択をしたね。","サラダ・ヘルシー","l",""],
+["豆腐と野菜のスープ定食","🍲","やさしい味で整える日。<br>胃もほっとする。","サラダ・ヘルシー,定食・セット","ld",""],
+["ハンバーグ","🍔","みんな大好き王道メニュー。<br>これはもう間違いない。","洋食,定食・セット","ld",""],
+["グリーンカレー","🍛","ココナッツの香りで<br>ちょっと旅気分。","エスニック,カレー","ld","辛いもの,パクチー系"],
+["フォー","🍜","つるっと軽めのアジアン。<br>ヘルシーなのに満足。","エスニック,麺類","l","パクチー系"],
+["あさりの酒蒸し定食","🐚","旨みたっぷりの一膳。<br>じんわり染みる味。","和食,定食・セット","d","貝類"],
+["おにぎり＋味噌汁","🍙","シンプルで十分。<br>時間がない日の味方。","和食,その他","l",""],
+["クラムチャウダー＋パン","🥣","とろっと温まる夜に。<br>ゆっくり食べよう。","洋食,その他","d","貝類"],
+["天ぷらそば","🍤","サクサクとつるつるの二刀流。","和食,麺類","ld",""],
+["照り焼きチキン丼","🍗","甘辛だれでごはんが進む！","和食,丼もの","ld",""],
+["牛丼","🐂","早い・うまい・満足。","和食,丼もの","ld",""],
+["豚丼","🐖","香ばしいタレでパワーチャージ。","和食,丼もの","ld",""],
+["海鮮丼","🍣","今日は華やかにいこう。","和食,丼もの","ld","生もの"],
+["鮭の塩焼き定食","🐟","王道の安心感。","和食,定食・セット","ld",""],
+["さばの味噌煮定食","🐟","じっくり染みるやさしさ。","和食,定食・セット","ld",""],
+["肉じゃが定食","🥔","ほっこり家庭の味。","和食,定食・セット","ld",""],
+["とんかつ定食","🍖","ガッツリ元気を出そう。","和食,定食・セット","ld",""],
+["天丼","🍤","揚げたてをどーんと。","和食,丼もの","ld",""],
+["すき焼き","🥘","ちょっと特別な夜に。","和食,その他","d",""],
+["焼き鳥丼","🍢","香ばしさでごはんが止まらない。","和食,丼もの","ld",""],
+["きつねうどん","🍜","甘いお揚げでほっとする。","和食,麺類","ld",""],
+["カレーうどん","🍛","汁はねに気をつけて！","和食,麺類,カレー","ld",""],
+["お好み焼き","🥞","ソースの香りに勝てない。","和食,その他","ld",""],
+["刺身定食","🍣","新鮮さで贅沢気分。","和食,定食・セット","ld","生もの"],
+["鶏南蛮そば","🍜","甘酢と鶏の組み合わせ最高。","和食,麺類","ld",""],
+["うな丼","🍱","疲れた日のごほうび。","和食,丼もの","ld",""],
+["ナポリタン","🍝","懐かしさで心がゆるむ。","洋食,麺類","ld","トマト"],
+["カルボナーラ","🍝","濃厚クリームで満たされよう。","洋食,麺類","ld",""],
+["ミートソースパスタ","🍝","定番の安定感。","洋食,麺類","ld","トマト"],
+["ビーフシチュー","🍲","じっくり煮込みの幸せ。","洋食","d",""],
+["グラタン","🧀","熱々チーズでご機嫌に。","洋食","ld",""],
+["ドリア","🧀","とろけるチーズに癒される。","洋食","ld",""],
+["ハヤシライス","🍛","カレーとはまた違う魅力。","洋食","ld","トマト"],
+["エビフライ定食","🍤","サクッとプリッと満足感。","洋食,定食・セット","ld",""],
+["チキンソテー","🍗","皮はパリッと中はジューシー。","洋食","ld",""],
+["ロコモコ丼","🍔","ハンバーグと目玉焼きの贅沢。","洋食,丼もの","ld",""],
+["クラブハウスサンド","🥪","軽めにサクッと済ませよう。","洋食,その他","l",""],
+["マルゲリータピザ","🍕","チーズびろーんを楽しもう。","洋食,その他","ld","トマト"],
+["ポトフ","🥕","野菜の甘みにほっこり。","洋食","d",""],
+["チキンのトマト煮","🍅","酸味と旨みで元気に。","洋食","ld","トマト"],
+["ステーキ","🥩","今日は自分にごほうび。","洋食","d",""],
+["サーモンのムニエル","🐟","バターの香りで優雅に。","洋食","ld",""],
+["ホットサンド","🥪","手軽でおいしい日。","洋食,その他","l",""],
+["餃子定食","🥟","ニンニクの力で元気に。","中華,定食・セット","ld",""],
+["回鍋肉定食","🥬","甘辛味噌でごはんが進む。","中華,定食・セット","ld",""],
+["青椒肉絲定食","🫑","シャキシャキで満足。","中華,定食・セット","ld",""],
+["エビチリ","🦐","ぷりぷりエビに辛さが決め手。","中華","ld","辛いもの"],
+["酢豚","🍍","甘酢あんでごきげんに。","中華","ld",""],
+["中華丼","🥢","具だくさんあんかけでほっこり。","中華,丼もの","ld",""],
+["醤油ラーメン","🍜","迷ったらシンプルな一杯。","中華,麺類","ld",""],
+["味噌ラーメン","🍜","コクのあるスープで温まろう。","中華,麺類","ld",""],
+["豚骨ラーメン","🍜","濃厚スープでテンションUP！","中華,麺類","ld",""],
+["焼きそば","🍜","ソース味でシンプルに。","中華,麺類","ld",""],
+["冷やし中華","🥢","さっぱり涼しく。","中華,麺類","l",""],
+["酸辣湯麺","🌶️","酸っぱ辛いのがクセになる。","中華,麺類","ld","辛いもの"],
+["レバニラ定食","🥬","スタミナ補給の日。","中華,定食・セット","ld",""],
+["麻婆豆腐定食","🌶️","痺れる辛さでリフレッシュ！","中華,定食・セット","ld","辛いもの"],
+["台湾まぜそば","🍜","混ぜて混ぜて、背徳の一杯。","中華,麺類","ld","辛いもの"],
+["タコライス","🌮","沖縄気分でごきげんに。","エスニック,丼もの","ld","トマト"],
+["トムヤムクン麺","🍜","酸味と辛みで目が覚める。","エスニック,麺類","ld","辛いもの,パクチー系"],
+["パッタイ","🍜","甘酸っぱいタイ風焼きそば。","エスニック,麺類","ld","ナッツ"],
+["ナシゴレン","🍳","スパイシーな焼き飯で南国気分。","エスニック","ld","辛いもの"],
+["バインミー","🥖","サクッとふわっと異国の味。","エスニック,その他","l","パクチー系"],
+["ケバブ丼","🥙","スパイスの香りでテンションUP。","エスニック,丼もの","ld",""],
+["インドカレー＋ナン","🍛","本格スパイスで気分転換。","エスニック,カレー","ld","辛いもの"],
+["バターチキンカレー","🍛","まろやかで食べやすい王道。","エスニック,カレー","ld","トマト"],
+["タンドリーチキン","🍗","スパイスたっぷりでスタミナ補給。","エスニック","ld",""],
+["キンパ","🍙","手軽に巻いてパクッと。","エスニック,その他","l",""],
+["チーズタッカルビ","🧀","とろーりチーズ×ピリ辛。","エスニック","ld","辛いもの"],
+["純豆腐（スンドゥブ）","🍲","ふわふわ豆腐でポカポカに。","エスニック,定食・セット","ld","辛いもの,貝類"],
+["冷麺","🍜","つるっとさっぱり。","エスニック,麺類","l",""],
+["サムギョプサル","🥓","巻いて食べるのが楽しい。","エスニック","d",""],
+["カツカレー","🍛","勝負の日に！","カレー","ld",""],
+["スープカレー","🍲","具だくさんで野菜も摂れる。","カレー","ld",""],
+["野菜カレー","🥕","やさしい味で体にも◎。","カレー,サラダ・ヘルシー","ld",""],
+["蒸し鶏サラダ","🥗","軽めで整える日。","サラダ・ヘルシー","l",""],
+["豆腐ハンバーグ定食","🍽️","ヘルシーでもしっかり満足。","サラダ・ヘルシー,定食・セット","ld",""],
+["具だくさん味噌汁定食","🥣","野菜たっぷりで体にやさしい。","サラダ・ヘルシー,定食・セット","ld",""],
+["グリルチキンプレート","🍗","高たんぱくでしっかり満足。","サラダ・ヘルシー","ld",""],
+["冷しゃぶサラダ","🥗","さっぱりしっかり食べよう。","サラダ・ヘルシー","ld",""]
+];
+var TAGS=["パクチー系","生もの","辛いもの","貝類","ナッツ","トマト"];
+var G=["すべて","和食","洋食","中華","麺類","丼もの","カレー","エスニック","定食・セット","サラダ・ヘルシー","その他"];
+var S={v:"top",t:"any",g:"すべて",cur:null,saved:false,ex:[],free:"",h:[],toast:""};
+function $(i){return document.getElementById(i)}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+try{var a=JSON.parse(localStorage.getItem("wte2"));if(a){S.ex=a.ex||[];S.free=a.free||"";S.h=a.h||[]}}catch(e){}
+function sv(){try{localStorage.setItem("wte2",JSON.stringify({ex:S.ex,free:S.free,h:S.h}))}catch(e){}}
+function go(v){S.v=v;S.toast="";R()}
+function pool(){
+ var fw=S.free.split(/[,、\s]+/).filter(Boolean);
+ return M.map(function(m,i){return i}).filter(function(i){
+  var m=M[i];
+  if(S.t!=="any"&&m[4].indexOf(S.t)<0)return false;
+  if(S.g!=="すべて"&&m[3].split(",").indexOf(S.g)<0)return false;
+  if(m[5].split(",").some(function(t){return t&&S.ex.indexOf(t)>-1}))return false;
+  if(fw.some(function(w){return m[0].indexOf(w)>-1}))return false;
+  return true;
+ });
+}
+function decide(){
+ var p=pool();
+ if(!p.length){S.cur=-1;S.v="result";R();return}
+ var c=p.length>1?p.filter(function(i){return i!==S.cur}):p;
+ S.cur=c[Math.floor(Math.random()*c.length)];S.saved=false;S.v="result";R();
+}
+function save(){
+ if(S.saved)return;
+ var d=new Date(),ds=d.getFullYear()+"/"+("0"+(d.getMonth()+1)).slice(-2)+"/"+("0"+d.getDate()).slice(-2);
+ S.h.unshift({i:S.cur,d:ds});S.h=S.h.slice(0,50);S.saved=true;sv();R();
+}
+function setT(t){S.t=t;R()}
+function setG(g){S.g=g;R()}
+function tg(t){var k=S.ex.indexOf(t);if(k>-1)S.ex.splice(k,1);else S.ex.push(t);sv();R()}
+function saveSet(){S.free=$("fr").value;sv();S.toast="保存しました ✓";R()}
+function show(i){S.cur=i;S.saved=true;S.v="result";R()}
+function nav(){
+ var items=[["hist","🕘","履歴"],["set","⚙️","設定"],["how","ⓘ","使い方"]];
+ return '<div class="nav"><div>'+items.map(function(x){return '<button class="'+(S.v===x[0]?"on":"")+'" onclick="go(\''+x[0]+'\')"><span>'+x[1]+'</span>'+x[2]+'</button>'}).join("")+'</div></div>';
+}
+function dots(){
+ var h="",cs=["#ff6a13","#ffb27a","#aaa","#ff8f4a"];
+ for(var i=0;i<16;i++){h+='<span class="dot" style="left:'+(Math.random()*92+2)+'%;top:'+(Math.random()*150+10)+'px;background:'+cs[i%4]+';animation-delay:'+(i*0.03)+'s"></span>'}
+ return h;
+}
+function R(){
+ var h="",v=S.v;
+ if(v==="top"){
+  var em=["🍚","🍜","🍛","🍣","🍝","🍙"],ring="";
+  em.forEach(function(e,i){var a=i*60;ring+='<i style="transform:rotate('+a+'deg) translateY(-100px) rotate(-'+a+'deg)">'+e+'</i>'});
+  h='<div class="ac" style="font-size:30px;margin-top:20px">🍴</div><h1>今日、<br>何食べる？</h1><p class="s">ワンタップで、今日のごはんを決めよう。</p><div class="ring">'+ring+'<b>なに<br>たべる？</b></div><button class="btn" onclick="go(\'pick\')">今日のごはんを決める！</button>'+nav();
+ }else if(v==="pick"){
+  var ts=[["l","☀️","昼ごはん","ランチにおすすめ"],["d","🌇","夜ごはん","ディナーにおすすめ"],["any","🌙","なんでもOK","時間帯を問わず提案"]];
+  h='<div class="box"><h2>いつのごはん？</h2>'+ts.map(function(x){return '<button class="opt'+(S.t===x[0]?" on":"")+'" onclick="setT(\''+x[0]+'\')"><em>'+x[1]+'</em><span>'+x[2]+'<small>'+x[3]+'</small></span></button>'}).join("")+'<div class="lab">ジャンルを選ぶ</div><div class="chips">'+G.map(function(g){return '<button class="chip'+(S.g===g?" on":"")+'" onclick="setG(\''+g+'\')">'+g+'</button>'}).join("")+'</div></div><button class="btn" onclick="decide()">この条件で決める</button><button class="btn o" onclick="go(\'top\')">キャンセル</button>';
+ }else if(v==="result"){
+  if(S.cur<0){h='<div class="msg">条件に合う料理がありませんでした。<br>ジャンルや除外設定をゆるめてみてください。</div><button class="btn" onclick="go(\'pick\')">条件を変える</button>'+nav();}
+  else{var m=M[S.cur];
+   h=dots()+'<p class="sub1">＼ 今日のおすすめは… ／</p><div class="name">'+esc(m[0])+'</div><div class="pic">'+m[1]+'</div><div class="say">'+m[2]+'</div><button class="btn" onclick="decide()">↻ もう一回決める</button><button class="btn o" onclick="save()">'+(S.saved?"✓ 履歴に保存しました":"🔖 履歴に保存する")+'</button><button class="btn o" onclick="go(\'pick\')">条件を変える</button>'+nav();}
+ }else if(v==="hist"){
+  h='<div class="tt">履歴</div>'+(S.h.length?S.h.map(function(x){var m=M[x.i];return m?'<button class="row" onclick="show('+x.i+')"><span class="t">'+m[1]+'</span><span class="g">'+esc(m[0])+'<div class="d">'+x.d+'</div></span>›</button>':""}).join(""):'<div class="msg">まだ履歴がありません。<br>結果画面の「履歴に保存する」で貯まります。</div>')+nav();
+ }else if(v==="set"){
+  h='<div class="box"><h2>苦手な料理を除外</h2><p class="s" style="text-align:center;margin-bottom:8px">選択した料理は、結果に出てこなくなります。</p>'+TAGS.map(function(t){return '<button class="row" onclick="tg(\''+t+'\')"><span class="g">'+t+'</span><span class="sw'+(S.ex.indexOf(t)>-1?" on":"")+'"></span></button>'}).join("")+'<div class="lab">その他（自由入力）</div><input id="fr" value="'+esc(S.free)+'" placeholder="例：セロリ、ラム肉 など"><p class="s" style="margin-top:6px">※料理名に含まれる言葉で除外します（カンマ区切り）</p></div><button class="btn" onclick="saveSet()">保存する</button><p class="s" style="margin-top:10px;color:var(--ac)">'+S.toast+'</p>'+nav();
+ }else if(v==="how"){
+  var st=["アプリを開く（リンクやNFCタグから）","「今日のごはんを決める！」をタップ","昼・夜とジャンルを選んで決定","おすすめの料理が1つ表示されます","「もう一回決める」で他の候補を表示"];
+  h='<div class="tt">使い方</div><div class="box">'+st.map(function(s,i){return '<div class="step"><b>'+(i+1)+'</b><span>'+s+'</span></div>'}).join("")+'</div><div class="box" style="margin-top:14px"><div class="step" style="margin:0"><span>✓ 迷う時間をゼロに<br>✓ 自分の好みに合わせてカスタマイズ<br>✓ 履歴から「また食べたい！」が見つかる</span></div></div>'+nav();
+ }
+ $("app").innerHTML=h;window.scrollTo(0,0);
+}
+R();
+</script>
+</body>
+</html>
