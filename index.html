@@ -4,6 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>今日、何食べる？</title>
+<!-- PWA / ホーム画面アイコン -->
+<link rel="apple-touch-icon" href="what-to-eat.png">
+<link rel="manifest" href="what-to-eat.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="何食べる？">
+<meta name="theme-color" content="#ff6a13">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -56,12 +63,6 @@ h1{font-size:34px;line-height:1.3;margin:12px 0 8px}
 input{width:100%;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--fg);font-size:16px}
 .step{display:flex;gap:12px;align-items:flex-start;margin-bottom:14px;font-size:14px;line-height:1.6}
 .step b{flex:none;width:26px;height:26px;border-radius:50%;background:var(--ac);color:var(--acfg);display:flex;align-items:center;justify-content:center;font-size:13px}
-.edt{border:0;background:none;color:var(--ac);font-size:14px;font-weight:700;padding:4px 8px;cursor:pointer}
-.row.on{background:var(--soft)}
-.ck{flex:none;font-size:20px;color:var(--ac);width:22px}
-.bar{position:fixed;left:50%;transform:translateX(-50%);width:100%;max-width:440px;bottom:calc(66px + env(safe-area-inset-bottom,0px));padding:8px 20px;display:flex;gap:10px;background:var(--bg)}
-.bar .btn{margin-top:0;padding:13px}
-.btn:disabled{opacity:.4}
 .msg{color:var(--sub);font-size:14px;padding:30px 0}
 .tt{font-size:17px;font-weight:700;margin:4px 0 16px}
 button,input{font-family:inherit}
@@ -202,12 +203,12 @@ var C=[
 {k:"heat",l:"暑くてバテ気味",e:"🥵",d:"冷たい・さっぱりした候補",n:"水分と塩分もこまめにとってね。ぐったりするときは涼しい所で休んで、受診も考えてね。",i:/ざる|冷|フォー|サラダ|おにぎり/,x:/グラタン|ドリア|シチュー|鍋/},
 {k:"over",l:"食べすぎ・むくみ気味",e:"🫠",d:"軽め・野菜多めで揚げ物なしの候補",n:"むくみが続くときは、受診も考えてね。",i:/サラダ|豆腐|冷しゃぶ|野菜|焼き魚|味噌汁|スープ|ポトフ|グリル|お茶漬け|ざる|フォー|さば|鮭/,x:/カツ|揚|フライ|天|ステーキ|ハンバーグ|グラタン|ドリア|カルボナーラ|ラーメン|ピザ|サンド/}
 ];
-var S={edit:false,sel:[],c:"none",v:"top",t:"any",g:"すべて",cur:null,saved:false,ex:[],free:"",h:[],toast:""};
+var S={c:"none",v:"top",t:"any",g:"すべて",cur:null,saved:false,ex:[],free:"",h:[],toast:""};
 function $(i){return document.getElementById(i)}
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
 try{var a=JSON.parse(localStorage.getItem("wte2"));if(a){S.ex=a.ex||[];S.free=a.free||"";S.h=a.h||[]}}catch(e){}
 function sv(){try{localStorage.setItem("wte2",JSON.stringify({ex:S.ex,free:S.free,h:S.h}))}catch(e){}}
-function go(v){S.v=v;S.toast="";S.edit=false;S.sel=[];R()}
+function go(v){S.v=v;S.toast="";R()}
 function pool(){
  var fw=S.free.split(/[,、\s]+/).filter(Boolean);
  return M.map(function(m,i){return i}).filter(function(i){
@@ -237,16 +238,6 @@ function cond(){if(S.c==="none")return null;for(var j=0;j<C.length;j++)if(C[j].k
 function setG(g){S.g=g;R()}
 function tg(t){var k=S.ex.indexOf(t);if(k>-1)S.ex.splice(k,1);else S.ex.push(t);sv();R()}
 function saveSet(){S.free=$("fr").value;sv();S.toast="保存しました ✓";R()}
-function keep(f){var y=window.scrollY;f();window.scrollTo(0,y)}
-function te(){S.edit=!S.edit;S.sel=[];S.toast="";keep(R)}
-function ts(k){var p=S.sel.indexOf(k);if(p>-1)S.sel.splice(p,1);else S.sel.push(k);keep(R)}
-function sa(){S.sel=S.sel.length===S.h.length?[]:S.h.map(function(_,k){return k});keep(R)}
-function del(){
- var n=S.sel.length;if(!n||!confirm(n+"件を削除しますか？"))return;
- S.h=S.h.filter(function(_,k){return S.sel.indexOf(k)<0});S.sel=[];
- if(!S.h.length)S.edit=false;
- sv();S.toast=n+"件削除しました";R();
-}
 function show(i){S.cur=i;S.saved=true;S.v="result";R()}
 function nav(){
  var items=[["top","🏠","ホーム"],["hist","🕘","履歴"],["set","⚙️","設定"],["how","ⓘ","使い方"]];
@@ -271,7 +262,7 @@ function R(){
   else{var m=M[S.cur];
    h=dots()+'<p class="sub1">＼ 今日のおすすめは… ／</p><div class="name" style="font-size:'+(m[0].length>10?24:m[0].length>7?29:36)+'px">'+esc(m[0])+'</div><div class="pic">'+m[1]+'</div><div class="say">'+m[2]+'</div>'+(cond()?'<p class="s" style="margin:6px 0 2px">体調：'+cond().l+'向けの候補から選びました</p>':'')+'<button class="btn" onclick="decide()">↻ もう一回決める</button><button class="btn o" onclick="save()">'+(S.saved?"✓ 履歴に保存しました":"🔖 履歴に保存する")+'</button><button class="btn o" onclick="go(\'pick\')">条件を変える</button>'+nav();}
  }else if(v==="hist"){
-  h='<div class="tt" style="display:flex;align-items:center;justify-content:space-between">履歴'+(S.h.length?'<button class="edt" onclick="te()">'+(S.edit?"完了":"編集")+'</button>':"")+'</div>'+(S.edit?'<p class="s" style="text-align:left;margin:-8px 0 8px">削除する履歴を選んでください</p>':(S.toast?'<p class="s" style="text-align:left;margin:-8px 0 8px;color:var(--ac)">'+S.toast+'</p>':""))+(S.h.length?S.h.map(function(x,k){var m=M[x.i];if(!m)return "";var on=S.sel.indexOf(k)>-1;return S.edit?'<button class="row'+(on?" on":"")+'" onclick="ts('+k+')"><span class="ck">'+(on?"☑":"☐")+'</span><span class="t">'+m[1]+'</span><span class="g">'+esc(m[0])+'<div class="d">'+x.d+'</div></span></button>':'<button class="row" onclick="show('+x.i+')"><span class="t">'+m[1]+'</span><span class="g">'+esc(m[0])+'<div class="d">'+x.d+'</div></span>›</button>'}).join("")+(S.edit?'<div style="height:72px"></div><div class="bar"><button class="btn o" onclick="sa()">'+(S.sel.length===S.h.length?"選択解除":"すべて選択")+'</button><button class="btn"'+(S.sel.length?"":" disabled")+' onclick="del()">削除'+(S.sel.length?"（"+S.sel.length+"）":"")+'</button></div>':""):'<div class="msg">まだ履歴がありません。<br>結果画面の「履歴に保存する」で貯まります。</div>')+nav();
+  h='<div class="tt">履歴</div>'+(S.h.length?S.h.map(function(x){var m=M[x.i];return m?'<button class="row" onclick="show('+x.i+')"><span class="t">'+m[1]+'</span><span class="g">'+esc(m[0])+'<div class="d">'+x.d+'</div></span>›</button>':""}).join(""):'<div class="msg">まだ履歴がありません。<br>結果画面の「履歴に保存する」で貯まります。</div>')+nav();
  }else if(v==="set"){
   h='<div class="box"><h2>苦手な料理を除外</h2><p class="s" style="text-align:center;margin-bottom:8px">選択した料理は、結果に出てこなくなります。</p>'+TAGS.map(function(t){return '<button class="row" onclick="tg(\''+t+'\')"><span class="g">'+t+'</span><span class="sw'+(S.ex.indexOf(t)>-1?" on":"")+'"></span></button>'}).join("")+'<div class="lab">その他（自由入力）</div><input id="fr" value="'+esc(S.free)+'" placeholder="例：セロリ、ラム肉 など"><p class="s" style="margin-top:6px">※料理名に含まれる言葉で除外します（カンマ区切り）</p></div><button class="btn" onclick="saveSet()">保存する</button><p class="s" style="margin-top:10px;color:var(--ac)">'+S.toast+'</p>'+nav();
  }else if(v==="how"){
