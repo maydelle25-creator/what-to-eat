@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>今日、何食べる？</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#fffaf5;--fg:#2a211b;--sub:#8a7a6c;--card:#fff;--line:#f0e4d8;--soft:#fff1e6;--ac:#ff6a13;--acfg:#fff;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -11,7 +14,7 @@ box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:en
 :root[data-theme="dark"]{--bg:#1d1814;--fg:#f6ede4;--sub:#b5a493;--card:#29221c;--line:#3b3229;--soft:#33271d;--ac:#ff7a2b;--acfg:#1d1814}
 *{box-sizing:border-box}
 html,body{margin:0}
-body{background:var(--bg);color:var(--fg);font-family:-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif;display:flex;justify-content:center}
+body{background:var(--bg);color:var(--fg);font-family:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Hiragino Sans",sans-serif;display:flex;justify-content:center}
 #app{width:100%;max-width:440px;min-height:100vh;padding:24px 20px 96px;text-align:center;position:relative;overflow:hidden}
 .ac{color:var(--ac)}
 h1{font-size:34px;line-height:1.3;margin:12px 0 8px}
@@ -55,6 +58,23 @@ input{width:100%;padding:12px;border:1px solid var(--line);border-radius:12px;ba
 .step b{flex:none;width:26px;height:26px;border-radius:50%;background:var(--ac);color:var(--acfg);display:flex;align-items:center;justify-content:center;font-size:13px}
 .msg{color:var(--sub);font-size:14px;padding:30px 0}
 .tt{font-size:17px;font-weight:700;margin:4px 0 16px}
+button,input{font-family:inherit}
+.name{font-weight:900}
+.hero{min-height:calc(100vh - 150px);display:flex;flex-direction:column;justify-content:center}
+.hero h1{font-size:42px}
+.hero .btn{margin-top:40px}
+.hero svg{display:block;width:150px;margin:0 auto 22px;filter:drop-shadow(0 6px 10px rgba(120,70,20,.14))}
+.cap{font-size:13px;font-weight:700;color:var(--ac);letter-spacing:.12em;margin:18px 0 0}
+h1{font-weight:900;letter-spacing:.02em;margin:6px 0 10px}
+h1 .hl{background:linear-gradient(transparent 62%,rgba(255,106,19,.3) 62%);padding:0 4px}
+.plate{position:relative;width:260px;height:260px;margin:22px auto 26px}
+.plate .disc{position:absolute;inset:40px;border-radius:50%;background:var(--card);box-shadow:0 14px 34px rgba(255,106,19,.22),inset 0 0 0 10px var(--soft);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px}
+.plate .disc span{font-size:56px;animation:bob 2.4s ease-in-out infinite}
+.plate .disc small{font-size:14px;font-weight:700;color:var(--ac)}
+.plate i{position:absolute;left:50%;top:50%;width:44px;height:44px;margin:-22px;font-style:normal;font-size:26px;line-height:44px;background:var(--card);border-radius:50%;box-shadow:0 4px 12px rgba(0,0,0,.1);animation:bob 3s ease-in-out infinite}
+@keyframes bob{50%{translate:0 -6px}}
+.cta{box-shadow:0 10px 24px rgba(255,106,19,.35);font-size:17px}
+.cnt{font-size:12px;color:var(--sub);margin:14px 0 0}
 </style>
 </head>
 <body>
@@ -199,7 +219,7 @@ function tg(t){var k=S.ex.indexOf(t);if(k>-1)S.ex.splice(k,1);else S.ex.push(t);
 function saveSet(){S.free=$("fr").value;sv();S.toast="保存しました ✓";R()}
 function show(i){S.cur=i;S.saved=true;S.v="result";R()}
 function nav(){
- var items=[["hist","🕘","履歴"],["set","⚙️","設定"],["how","ⓘ","使い方"]];
+ var items=[["top","🏠","ホーム"],["hist","🕘","履歴"],["set","⚙️","設定"],["how","ⓘ","使い方"]];
  return '<div class="nav"><div>'+items.map(function(x){return '<button class="'+(S.v===x[0]?"on":"")+'" onclick="go(\''+x[0]+'\')"><span>'+x[1]+'</span>'+x[2]+'</button>'}).join("")+'</div></div>';
 }
 function dots(){
@@ -211,8 +231,8 @@ function R(){
  var h="",v=S.v;
  if(v==="top"){
   var em=["🍚","🍜","🍛","🍣","🍝","🍙"],ring="";
-  em.forEach(function(e,i){var a=i*60;ring+='<i style="transform:rotate('+a+'deg) translateY(-100px) rotate(-'+a+'deg)">'+e+'</i>'});
-  h='<div class="ac" style="font-size:30px;margin-top:20px">🍴</div><h1>今日、<br>何食べる？</h1><p class="s">ワンタップで、今日のごはんを決めよう。</p><div class="ring">'+ring+'<b>なに<br>たべる？</b></div><button class="btn" onclick="go(\'pick\')">今日のごはんを決める！</button>'+nav();
+  em.forEach(function(e,i){var a=i*60;ring+='<i style="transform:rotate('+a+'deg) translateY(-108px) rotate(-'+a+'deg);animation-delay:'+(i*0.4)+'s">'+e+'</i>'});
+  h='<div class="hero"><svg viewBox="0 0 200 172" aria-hidden="true"><ellipse cx="100" cy="162" rx="56" ry="7" style="fill:var(--soft)"/><path d="M34 98c0-42 28-64 66-64s66 22 66 64z" style="fill:var(--card)"/><path d="M100 34c38 0 66 22 66 64h-18c0-30-18-56-48-64z" style="fill:var(--soft)"/><ellipse cx="66" cy="58" rx="5" ry="2.6" transform="rotate(-30 66 58)" style="fill:var(--line)"/><ellipse cx="94" cy="44" rx="5" ry="2.6" transform="rotate(20 94 44)" style="fill:var(--line)"/><ellipse cx="124" cy="50" rx="5" ry="2.6" transform="rotate(-20 124 50)" style="fill:var(--line)"/><ellipse cx="146" cy="68" rx="5" ry="2.6" transform="rotate(35 146 68)" style="fill:var(--line)"/><ellipse cx="60" cy="78" rx="5" ry="2.6" transform="rotate(15 60 78)" style="fill:var(--line)"/><circle cx="84" cy="78" r="5" style="fill:var(--fg)"/><circle cx="116" cy="78" r="5" style="fill:var(--fg)"/><path d="M94 86q6 6 12 0" style="fill:none;stroke:var(--fg)" stroke-width="3" stroke-linecap="round"/><ellipse cx="72" cy="89" rx="8" ry="5" fill="#ff9d8f" opacity=".7"/><ellipse cx="128" cy="89" rx="8" ry="5" fill="#ff9d8f" opacity=".7"/><path d="M28 96h144c0 36-30 62-72 62s-72-26-72-62z" style="fill:var(--ac)"/><path d="M50 116h100" style="stroke:var(--acfg);opacity:.4" stroke-width="5" stroke-linecap="round"/><path d="M172 28l3 8 8 3-8 3-3 8-3-8-8-3 8-3z" style="fill:var(--ac)"/><path d="M30 52l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" style="fill:var(--ac)"/></svg><h1>今日、<br><span class="hl">何食べる？</span></h1><p class="s">ワンタップで、今日のごはんを決めよう。</p><button class="btn cta" onclick="go(\'pick\')">今日のごはんを決める！</button></div>'+nav();
  }else if(v==="pick"){
   var ts=[["l","☀️","昼ごはん","ランチにおすすめ"],["d","🌇","夜ごはん","ディナーにおすすめ"],["any","🌙","なんでもOK","時間帯を問わず提案"]];
   h='<div class="box"><h2>いつのごはん？</h2>'+ts.map(function(x){return '<button class="opt'+(S.t===x[0]?" on":"")+'" onclick="setT(\''+x[0]+'\')"><em>'+x[1]+'</em><span>'+x[2]+'<small>'+x[3]+'</small></span></button>'}).join("")+'<div class="lab">ジャンルを選ぶ</div><div class="chips">'+G.map(function(g){return '<button class="chip'+(S.g===g?" on":"")+'" onclick="setG(\''+g+'\')">'+g+'</button>'}).join("")+'</div></div><button class="btn" onclick="decide()">この条件で決める</button><button class="btn o" onclick="go(\'top\')">キャンセル</button>';
@@ -225,7 +245,7 @@ function R(){
  }else if(v==="set"){
   h='<div class="box"><h2>苦手な料理を除外</h2><p class="s" style="text-align:center;margin-bottom:8px">選択した料理は、結果に出てこなくなります。</p>'+TAGS.map(function(t){return '<button class="row" onclick="tg(\''+t+'\')"><span class="g">'+t+'</span><span class="sw'+(S.ex.indexOf(t)>-1?" on":"")+'"></span></button>'}).join("")+'<div class="lab">その他（自由入力）</div><input id="fr" value="'+esc(S.free)+'" placeholder="例：セロリ、ラム肉 など"><p class="s" style="margin-top:6px">※料理名に含まれる言葉で除外します（カンマ区切り）</p></div><button class="btn" onclick="saveSet()">保存する</button><p class="s" style="margin-top:10px;color:var(--ac)">'+S.toast+'</p>'+nav();
  }else if(v==="how"){
-  var st=["アプリを開く（リンクやNFCタグから）","「今日のごはんを決める！」をタップ","昼・夜とジャンルを選んで決定","おすすめの料理が1つ表示されます","「もう一回決める」で他の候補を表示"];
+  var st=["アプリを開く","「今日のごはんを決める！」をタップ","昼・夜とジャンルを選んで決定","おすすめの料理が1つ表示されます","「もう一回決める」で他の候補を表示"];
   h='<div class="tt">使い方</div><div class="box">'+st.map(function(s,i){return '<div class="step"><b>'+(i+1)+'</b><span>'+s+'</span></div>'}).join("")+'</div><div class="box" style="margin-top:14px"><div class="step" style="margin:0"><span>✓ 迷う時間をゼロに<br>✓ 自分の好みに合わせてカスタマイズ<br>✓ 履歴から「また食べたい！」が見つかる</span></div></div>'+nav();
  }
  $("app").innerHTML=h;window.scrollTo(0,0);
