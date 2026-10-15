@@ -185,7 +185,17 @@ var M=[
 ];
 var TAGS=["パクチー系","生もの","辛いもの","貝類","ナッツ","トマト"];
 var G=["すべて","和食","洋食","中華","麺類","丼もの","カレー","エスニック","定食・セット","サラダ・ヘルシー","その他"];
-var S={v:"top",t:"any",g:"すべて",cur:null,saved:false,ex:[],free:"",h:[],toast:""};
+var C=[
+{k:"none",l:"なんでもOK",e:"😊"},
+{k:"genki",l:"元気！がっつり",e:"💪",d:"ボリューム満点の候補",i:/カツ|唐揚|牛丼|豚丼|天丼|ステーキ|ハンバーグ|焼肉|チャーハン|ラーメン|カレー|餃子|ピザ|サムギョプサル|タッカルビ|ロコモコ|うな|しょうが焼|回鍋肉|レバニラ|麻婆|ビビンバ|まぜそば|ガパオ|タコライス|エビフライ/,x:/サラダ|ざる|冷|フォー|おにぎり|お茶漬け|蒸し鶏|豆腐|野菜カレー/},
+{k:"tired",l:"疲れ気味",e:"😮‍💨",d:"たんぱく質としっかり食べられる候補",i:/豚|牛|肉|うな|ステーキ|レバ|餃子|カツ|唐揚|しょうが|チキン|鶏|サーモン|さば|鮭|ハンバーグ|卵|親子|オムライス/,x:/ざる|冷|おにぎり|フォー/},
+{k:"weak",l:"胃が重い・食欲ない",e:"🥺",d:"あっさり・消化にやさしい候補",i:/うどん|そば|お茶漬け|おにぎり|スープ|豆腐|ポトフ|親子丼|冷麺|冷やし|フォー|蒸し鶏|味噌汁|野菜カレー/,x:/カツ|揚|フライ|ステーキ|豚骨|ラーメン|ハンバーグ|グラタン|ドリア|カルボナーラ|ペペロン/,ns:1},
+{k:"cold",l:"風邪ぎみ",e:"🤧",d:"温かくて食べやすい候補",i:/うどん|スープ|ポトフ|味噌汁|親子丼|豆腐|グラタン|ドリア|シチュー|チャウダー|すき焼き|煮|お茶漬け|鶏南蛮|天津飯|中華丼/,x:/ざる|冷|サラダ/,ns:1},
+{k:"sleep",l:"寝不足",e:"🥱",d:"たんぱく質をとれる手軽な候補",i:/鮭|さば|サーモン|卵|親子|オムライス|天津|豆腐|チキン|蒸し鶏/,x:/ざる|冷|ラーメン|ペペロン/},
+{k:"heat",l:"暑くてバテ気味",e:"🥵",d:"冷たい・さっぱりした候補",i:/ざる|冷|フォー|サラダ|おにぎり/,x:/グラタン|ドリア|シチュー|鍋/},
+{k:"over",l:"食べすぎ・むくみ気味",e:"🫠",d:"軽め・野菜多めで揚げ物なしの候補",i:/サラダ|豆腐|冷しゃぶ|野菜|焼き魚|味噌汁|スープ|ポトフ|グリル|お茶漬け|ざる|フォー|さば|鮭/,x:/カツ|揚|フライ|天|ステーキ|ハンバーグ|グラタン|ドリア|カルボナーラ|ラーメン|ピザ|サンド/}
+];
+var S={c:"none",v:"top",t:"any",g:"すべて",cur:null,saved:false,ex:[],free:"",h:[],toast:""};
 function $(i){return document.getElementById(i)}
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
 try{var a=JSON.parse(localStorage.getItem("wte2"));if(a){S.ex=a.ex||[];S.free=a.free||"";S.h=a.h||[]}}catch(e){}
@@ -197,6 +207,7 @@ function pool(){
   var m=M[i];
   if(S.t!=="any"&&m[4].indexOf(S.t)<0)return false;
   if(S.g!=="すべて"&&m[3].split(",").indexOf(S.g)<0)return false;
+  var cc=cond();if(cc&&(!cc.i.test(m[0])||(cc.x&&cc.x.test(m[0]))||(cc.ns&&m[5].indexOf("辛いもの")>-1)))return false;
   if(m[5].split(",").some(function(t){return t&&S.ex.indexOf(t)>-1}))return false;
   if(fw.some(function(w){return m[0].indexOf(w)>-1}))return false;
   return true;
@@ -214,6 +225,8 @@ function save(){
  S.h.unshift({i:S.cur,d:ds});S.h=S.h.slice(0,50);S.saved=true;sv();R();
 }
 function setT(t){S.t=t;R()}
+function setC(k){S.c=k;R()}
+function cond(){if(S.c==="none")return null;for(var j=0;j<C.length;j++)if(C[j].k===S.c)return C[j];return null}
 function setG(g){S.g=g;R()}
 function tg(t){var k=S.ex.indexOf(t);if(k>-1)S.ex.splice(k,1);else S.ex.push(t);sv();R()}
 function saveSet(){S.free=$("fr").value;sv();S.toast="保存しました ✓";R()}
@@ -235,11 +248,11 @@ function R(){
   h='<div class="hero"><svg viewBox="0 0 200 172" aria-hidden="true"><ellipse cx="100" cy="162" rx="56" ry="7" style="fill:var(--soft)"/><path d="M34 98c0-42 28-64 66-64s66 22 66 64z" style="fill:var(--card)"/><path d="M100 34c38 0 66 22 66 64h-18c0-30-18-56-48-64z" style="fill:var(--soft)"/><ellipse cx="66" cy="58" rx="5" ry="2.6" transform="rotate(-30 66 58)" style="fill:var(--line)"/><ellipse cx="94" cy="44" rx="5" ry="2.6" transform="rotate(20 94 44)" style="fill:var(--line)"/><ellipse cx="124" cy="50" rx="5" ry="2.6" transform="rotate(-20 124 50)" style="fill:var(--line)"/><ellipse cx="146" cy="68" rx="5" ry="2.6" transform="rotate(35 146 68)" style="fill:var(--line)"/><ellipse cx="60" cy="78" rx="5" ry="2.6" transform="rotate(15 60 78)" style="fill:var(--line)"/><circle cx="84" cy="78" r="5" style="fill:var(--fg)"/><circle cx="116" cy="78" r="5" style="fill:var(--fg)"/><path d="M94 86q6 6 12 0" style="fill:none;stroke:var(--fg)" stroke-width="3" stroke-linecap="round"/><ellipse cx="72" cy="89" rx="8" ry="5" fill="#ff9d8f" opacity=".7"/><ellipse cx="128" cy="89" rx="8" ry="5" fill="#ff9d8f" opacity=".7"/><path d="M28 96h144c0 36-30 62-72 62s-72-26-72-62z" style="fill:var(--ac)"/><path d="M50 116h100" style="stroke:var(--acfg);opacity:.4" stroke-width="5" stroke-linecap="round"/><path d="M172 28l3 8 8 3-8 3-3 8-3-8-8-3 8-3z" style="fill:var(--ac)"/><path d="M30 52l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" style="fill:var(--ac)"/></svg><h1>今日、<br><span class="hl">何食べる？</span></h1><p class="s">ワンタップで、今日のごはんを決めよう。</p><button class="btn cta" onclick="go(\'pick\')">今日のごはんを決める！</button></div>'+nav();
  }else if(v==="pick"){
   var ts=[["l","☀️","昼ごはん","ランチにおすすめ"],["d","🌇","夜ごはん","ディナーにおすすめ"],["any","🌙","なんでもOK","時間帯を問わず提案"]];
-  h='<div class="box"><h2>いつのごはん？</h2>'+ts.map(function(x){return '<button class="opt'+(S.t===x[0]?" on":"")+'" onclick="setT(\''+x[0]+'\')"><em>'+x[1]+'</em><span>'+x[2]+'<small>'+x[3]+'</small></span></button>'}).join("")+'<div class="lab">ジャンルを選ぶ</div><div class="chips">'+G.map(function(g){return '<button class="chip'+(S.g===g?" on":"")+'" onclick="setG(\''+g+'\')">'+g+'</button>'}).join("")+'</div></div><button class="btn" onclick="decide()">この条件で決める</button><button class="btn o" onclick="go(\'top\')">キャンセル</button>';
+  h='<div class="box"><h2>いつのごはん？</h2>'+ts.map(function(x){return '<button class="opt'+(S.t===x[0]?" on":"")+'" onclick="setT(\''+x[0]+'\')"><em>'+x[1]+'</em><span>'+x[2]+'<small>'+x[3]+'</small></span></button>'}).join("")+'<div class="lab">今日の体調</div><div class="chips">'+C.map(function(c){return '<button class="chip'+(S.c===c.k?" on":"")+'" onclick="setC(\''+c.k+'\')">'+c.e+' '+c.l+'</button>'}).join("")+'</div>'+(cond()?'<p class="s" style="margin:8px 0 0;text-align:left">'+cond().d+'を出します。一般的な目安なので、つらいときは無理せず休んで、続くようなら受診してね。</p>':'')+'<div class="lab">ジャンルを選ぶ</div><div class="chips">'+G.map(function(g){return '<button class="chip'+(S.g===g?" on":"")+'" onclick="setG(\''+g+'\')">'+g+'</button>'}).join("")+'</div></div><button class="btn" onclick="decide()">この条件で決める</button><button class="btn o" onclick="go(\'top\')">キャンセル</button>';
  }else if(v==="result"){
   if(S.cur<0){h='<div class="msg">条件に合う料理がありませんでした。<br>ジャンルや除外設定をゆるめてみてください。</div><button class="btn" onclick="go(\'pick\')">条件を変える</button>'+nav();}
   else{var m=M[S.cur];
-   h=dots()+'<p class="sub1">＼ 今日のおすすめは… ／</p><div class="name" style="font-size:'+(m[0].length>10?24:m[0].length>7?29:36)+'px">'+esc(m[0])+'</div><div class="pic">'+m[1]+'</div><div class="say">'+m[2]+'</div><button class="btn" onclick="decide()">↻ もう一回決める</button><button class="btn o" onclick="save()">'+(S.saved?"✓ 履歴に保存しました":"🔖 履歴に保存する")+'</button><button class="btn o" onclick="go(\'pick\')">条件を変える</button>'+nav();}
+   h=dots()+'<p class="sub1">＼ 今日のおすすめは… ／</p><div class="name" style="font-size:'+(m[0].length>10?24:m[0].length>7?29:36)+'px">'+esc(m[0])+'</div><div class="pic">'+m[1]+'</div><div class="say">'+m[2]+'</div>'+(cond()?'<p class="s" style="margin:6px 0 2px">体調：'+cond().l+'向けの候補から選びました</p>':'')+'<button class="btn" onclick="decide()">↻ もう一回決める</button><button class="btn o" onclick="save()">'+(S.saved?"✓ 履歴に保存しました":"🔖 履歴に保存する")+'</button><button class="btn o" onclick="go(\'pick\')">条件を変える</button>'+nav();}
  }else if(v==="hist"){
   h='<div class="tt">履歴</div>'+(S.h.length?S.h.map(function(x){var m=M[x.i];return m?'<button class="row" onclick="show('+x.i+')"><span class="t">'+m[1]+'</span><span class="g">'+esc(m[0])+'<div class="d">'+x.d+'</div></span>›</button>':""}).join(""):'<div class="msg">まだ履歴がありません。<br>結果画面の「履歴に保存する」で貯まります。</div>')+nav();
  }else if(v==="set"){
