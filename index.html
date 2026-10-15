@@ -63,7 +63,8 @@ button,input{font-family:inherit}
 .hero{min-height:calc(100vh - 150px);display:flex;flex-direction:column;justify-content:center}
 .hero h1{font-size:42px}
 .hero .btn{margin-top:40px}
-.hero svg{display:block;width:150px;margin:0 auto 22px;filter:drop-shadow(0 6px 10px rgba(120,70,20,.14))}
+.hero svg{display:block;width:150px;margin:0 auto 22px;filter:drop-shadow(0 6px 10px rgba(120,70,20,.14));animation:bob 2.6s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.hero svg{animation:none}}
 .cap{font-size:13px;font-weight:700;color:var(--ac);letter-spacing:.12em;margin:18px 0 0}
 h1{font-weight:900;letter-spacing:.02em;margin:6px 0 10px}
 h1 .hl{background:linear-gradient(transparent 62%,rgba(255,106,19,.3) 62%);padding:0 4px}
