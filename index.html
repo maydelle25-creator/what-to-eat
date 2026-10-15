@@ -26,7 +26,7 @@ h1{font-size:34px;line-height:1.3;margin:12px 0 8px}
 .ring i{position:absolute;left:50%;top:50%;margin:-22px;width:44px;height:44px;font-style:normal;font-size:30px;line-height:44px}
 .ring b{position:absolute;left:50%;top:50%;margin:-52px;width:104px;height:104px;border-radius:50%;background:var(--ac);opacity:.9;color:var(--acfg);font-size:17px;line-height:1.3;display:flex;align-items:center;justify-content:center}
 .sub1{font-size:14px;color:var(--sub);margin:18px 0 0}
-.name{font-size:36px;font-weight:800;color:var(--ac);margin:6px 0 16px;word-break:keep-all}
+.name{font-size:36px;font-weight:800;color:var(--ac);margin:6px 0 16px;overflow-wrap:anywhere;line-height:1.3}
 .pic{background:var(--soft);border-radius:24px;height:200px;display:flex;align-items:center;justify-content:center;font-size:110px}
 .say{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin:-24px 14px 8px;position:relative;font-size:15px;line-height:1.7}
 .dot{position:absolute;width:7px;height:7px;border-radius:50%;animation:pop .6s ease-out both}
@@ -239,7 +239,7 @@ function R(){
  }else if(v==="result"){
   if(S.cur<0){h='<div class="msg">条件に合う料理がありませんでした。<br>ジャンルや除外設定をゆるめてみてください。</div><button class="btn" onclick="go(\'pick\')">条件を変える</button>'+nav();}
   else{var m=M[S.cur];
-   h=dots()+'<p class="sub1">＼ 今日のおすすめは… ／</p><div class="name">'+esc(m[0])+'</div><div class="pic">'+m[1]+'</div><div class="say">'+m[2]+'</div><button class="btn" onclick="decide()">↻ もう一回決める</button><button class="btn o" onclick="save()">'+(S.saved?"✓ 履歴に保存しました":"🔖 履歴に保存する")+'</button><button class="btn o" onclick="go(\'pick\')">条件を変える</button>'+nav();}
+   h=dots()+'<p class="sub1">＼ 今日のおすすめは… ／</p><div class="name" style="font-size:'+(m[0].length>10?24:m[0].length>7?29:36)+'px">'+esc(m[0])+'</div><div class="pic">'+m[1]+'</div><div class="say">'+m[2]+'</div><button class="btn" onclick="decide()">↻ もう一回決める</button><button class="btn o" onclick="save()">'+(S.saved?"✓ 履歴に保存しました":"🔖 履歴に保存する")+'</button><button class="btn o" onclick="go(\'pick\')">条件を変える</button>'+nav();}
  }else if(v==="hist"){
   h='<div class="tt">履歴</div>'+(S.h.length?S.h.map(function(x){var m=M[x.i];return m?'<button class="row" onclick="show('+x.i+')"><span class="t">'+m[1]+'</span><span class="g">'+esc(m[0])+'<div class="d">'+x.d+'</div></span>›</button>':""}).join(""):'<div class="msg">まだ履歴がありません。<br>結果画面の「履歴に保存する」で貯まります。</div>')+nav();
  }else if(v==="set"){
